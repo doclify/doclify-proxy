@@ -1,6 +1,6 @@
 import { IncomingMessage } from 'http'
 import defu from 'defu'
-import { createCache } from 'cached'
+import * as cached from 'cached'
 import { createProxyMiddleware, RequestHandler, responseInterceptor } from 'http-proxy-middleware'
 import { DoclifyProxyDefaultOptions, DoclifyProxyOptions, ICacheObject, IDoclifyResponse } from './types'
 
@@ -48,7 +48,7 @@ export default class DoclifyProxy {
     const driverOptions: any = options.driver ?? {}
     const specificDriverOptions = driverOptions[driver] || {}
 
-    const cache = createCache({
+    const cache = cached.createCache({
       name: this.options.cache?.name ?? 'doclify',
       backend: {
         type: driver,
@@ -161,7 +161,7 @@ export default class DoclifyProxy {
       this.options.webhookToken === req.headers['x-doclify-token']
     ) {
       status = true
-      const anyCache = this.cache as any
+      const anyCache = this.cache
       anyCache.flush()
     }
 
