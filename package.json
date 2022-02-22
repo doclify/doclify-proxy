@@ -1,6 +1,6 @@
 {
   "name": "@doclify/proxy",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Doclify proxy middleware",
   "repository": "doclify/doclify-proxy",
   "license": "MIT",
@@ -38,6 +38,7 @@
     }
   },
   "dependencies": {
+    "@types/cached": "^6.0.0",
     "cached": "^6.1.0",
     "defu": "^5.0.1",
     "http-proxy-middleware": "^1.0.6"
@@ -46,7 +47,6 @@
     "@commitlint/cli": "16.0.1",
     "@commitlint/config-conventional": "16.0.0",
     "@release-it/conventional-changelog": "4.1.0",
-    "@types/cached": "^6.0.0",
     "@types/jest": "27.4.0",
     "@types/sinon": "10.0.6",
     "@typescript-eslint/eslint-plugin": "5.9.0",
