@@ -13,7 +13,7 @@ export type CacheOptions = {
   allowStale?: boolean
 }
 
-export type DoclifyOptions = {
+export type DoclifyProxyOptions = {
   path?: string
   url?: string
   repository?: string
@@ -23,7 +23,7 @@ export type DoclifyOptions = {
   cache?: CacheOptions
 }
 
-export type DoclifyDefaultOptions = {
+export type DoclifyProxyDefaultOptions = {
   path: string
   url?: string
   repository?: string

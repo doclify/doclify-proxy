@@ -2,20 +2,20 @@ import { IncomingMessage } from 'http'
 import defu from 'defu'
 import { createCache } from 'cached'
 import { createProxyMiddleware, RequestHandler, responseInterceptor } from 'http-proxy-middleware'
-import { DoclifyDefaultOptions, DoclifyOptions, ICacheObject, IDoclifyResponse } from './types'
+import { DoclifyProxyDefaultOptions, DoclifyProxyOptions, ICacheObject, IDoclifyResponse } from './types'
 
-const defaults: DoclifyDefaultOptions = {
+const defaults: DoclifyProxyDefaultOptions = {
   path: '/doclify',
   timeout: 5000
 }
 
 export default class DoclifyProxy {
-  public options: DoclifyDefaultOptions
+  public options: DoclifyProxyDefaultOptions
   public proxy: RequestHandler
   public cache?: ReturnType<typeof createCache>
 
-  constructor (options?: DoclifyOptions) {
-    this.options = defu((options as DoclifyDefaultOptions) || {}, defaults)
+  constructor (options?: DoclifyProxyOptions) {
+    this.options = defu((options as DoclifyProxyDefaultOptions) || {}, defaults)
 
     if (!this.options.url) {
       if (!this.options.repository) {
