@@ -1,6 +1,6 @@
 {
   "name": "@doclify/proxy",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Doclify proxy middleware",
   "repository": "doclify/doclify-proxy",
   "license": "MIT",

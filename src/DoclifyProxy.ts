@@ -1,6 +1,6 @@
 import { IncomingMessage } from 'http'
 import defu from 'defu'
-import * as cached from 'cached'
+import cached from 'cached'
 import { createProxyMiddleware, RequestHandler, responseInterceptor } from 'http-proxy-middleware'
 import { DoclifyProxyDefaultOptions, DoclifyProxyOptions, ICacheObject, IDoclifyResponse } from './types'
 
@@ -12,7 +12,7 @@ const defaults: DoclifyProxyDefaultOptions = {
 export default class DoclifyProxy {
   public options: DoclifyProxyDefaultOptions
   public proxy: RequestHandler
-  public cache?: ReturnType<typeof createCache>
+  public cache?: ReturnType<typeof cached.createCache>
 
   constructor (options?: DoclifyProxyOptions) {
     this.options = defu((options as DoclifyProxyDefaultOptions) || {}, defaults)
