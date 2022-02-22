@@ -161,8 +161,8 @@ export default class DoclifyProxy {
       this.options.webhookToken === req.headers['x-doclify-token']
     ) {
       status = true
-      const anyCache = this.cache
-      anyCache.flush()
+      const anyCache = this.cache as any
+      anyCache?.flush()
     }
 
     return res.end(JSON.stringify({ status }))
