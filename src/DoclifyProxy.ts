@@ -27,11 +27,11 @@ export default class DoclifyProxy {
       }
     }
 
-    this.proxy = this.createProxy()
-
     if (this.options.cache) {
       this.cache = this.createCache()
     }
+
+    this.proxy = this.createProxy()
   }
 
   public get url (): string {
@@ -75,8 +75,8 @@ export default class DoclifyProxy {
       headers,
       target: this.url,
       pathRewrite: { ['^' + this.options.path]: '' },
-      selfHandleResponse: !!this.cache,
-      onProxyRes: this.cache ? this.onProxyRes : undefined
+      selfHandleResponse: !!this.options.cache,
+      onProxyRes: this.options.cache ? this.onProxyRes : undefined
     })
   }
 
