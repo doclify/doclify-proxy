@@ -70,10 +70,11 @@ export default class DoclifyProxy {
       headers.Authorization = 'Bearer ' + this.options.key
     }
 
-    return createProxyMiddleware({
+    return createProxyMiddleware(this.options.path, {
       changeOrigin: true,
       headers,
       target: this.url,
+      pathRewrite: { ['^' + this.options.path]: '' },
       selfHandleResponse: !!this.cache,
       onProxyRes: this.cache ? this.onProxyRes : undefined
     })
@@ -115,19 +116,17 @@ export default class DoclifyProxy {
 
   public middleware = async (req: IncomingMessage, res: IDoclifyResponse, next: () => void) => {
     const proxy = this.proxy as any
-    req.url = req.url ?? ''
+    const url = req.url ?? ''
 
-    if (req.url.indexOf(this.options.path) !== 0) {
+    if (url.indexOf(this.options.path) !== 0) {
       return next()
     }
-
-    req.url = req.url.replace(new RegExp('^' + this.options.path), '')
 
     if (!this.cache) {
       return proxy(req, res, next)
     }
 
-    const key = req.url
+    const key = url.replace(new RegExp('^' + this.options.path), '')
 
     if (key === '/webhook') {
       return this.handleWebhook(req, res)
