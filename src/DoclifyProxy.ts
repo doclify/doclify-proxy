@@ -60,6 +60,14 @@ export default class DoclifyProxy {
       }
     })
 
+    const cacheBackend = (cache as any).backend
+
+    if (cacheBackend && cacheBackend.client && typeof cacheBackend.client.on === 'function') {
+      cacheBackend.client.on('error', (err: Error) => {
+        console.warn('[DoclifyProxy] cache error:', err.message)
+      })
+    }
+
     return cache
   }
 
@@ -81,6 +89,7 @@ export default class DoclifyProxy {
   }
 
   // eslint-disable-next-line require-await
+  // eslint-disable-next-line @typescript-eslint/require-await
   private onProxyRes = responseInterceptor(async (responseBuffer, proxyRes, req, res) => {
     if (!this.cache) {
       return responseBuffer
@@ -107,47 +116,63 @@ export default class DoclifyProxy {
           data: responseBuffer.toString('utf-8')
         })
         .catch((err) => {
-          console.warn('Failed to save cache:', err.message)
+          console.warn('[DoclifyProxy] failed to save cache:', err.message)
         })
     }
 
     return responseBuffer
   })
 
-  public middleware = async (req: IncomingMessage, res: IDoclifyResponse, next: () => void) => {
+  public middleware = async (req: IncomingMessage, res: IDoclifyResponse, next?: (err?: Error) => void) => {
     const proxy = this.proxy as any
     const url = req.url ?? ''
 
     if (url.indexOf(this.options.path) !== 0) {
-      return next()
+      return next && next()
     }
 
-    if (!this.cache) {
-      return proxy(req, res, next)
-    }
+    if (this.cache) {
+      const key = url.replace(new RegExp('^' + this.options.path), '')
 
-    const key = url.replace(new RegExp('^' + this.options.path), '')
+      if (key === '/webhook') {
+        return this.handleWebhook(req, res)
+      }
 
-    if (key === '/webhook') {
-      return this.handleWebhook(req, res)
-    }
+      let cache: ICacheObject | null = null
 
-    const cache = (await this.cache.get(key)) as ICacheObject | null
+      try {
+        cache = (await this.cache.get(key)) as ICacheObject | null
+      } catch (err) {
+        console.warn('[DoclifyProxy] failed to get cache:', (err as Error).message)
+      }
 
-    if (cache) {
-      if (
-        this.options.cache?.allowStale === false ||
-        cache.expiresAt >= Math.floor(Date.now() / 1000)
-      ) {
-        res.statusCode = cache.statusCode
-        res.setHeader('content-type', 'application/json')
-        return res.end(cache.data)
-      } else {
-        res.cache = cache
+      if (cache) {
+        if (
+          this.options.cache?.allowStale === false ||
+          cache.expiresAt >= Math.floor(Date.now() / 1000)
+        ) {
+          res.statusCode = cache.statusCode
+          res.setHeader('content-type', 'application/json')
+          return res.end(cache.data)
+        } else {
+          res.cache = cache
+        }
       }
     }
 
-    return proxy(req, res, next)
+    return new Promise<void>((resolve, reject) => {
+      const wrappedNext = (err?: Error) => {
+        if (err) {
+          next && next(err)
+          return reject(err)
+        }
+
+        next && next()
+        return resolve()
+      }
+
+      return proxy(req, res, wrappedNext)
+    })
   }
 
   private handleWebhook = (req: IncomingMessage, res: IDoclifyResponse) => {
