@@ -97,7 +97,7 @@ export default class DoclifyProxy {
 
     const doclifyRes = res as IDoclifyResponse
 
-    const key = req.url ?? ''
+    const key: string = (req as any).originalUrl ?? req.url ?? ''
 
     if (doclifyRes.statusCode >= 500) {
       if (doclifyRes.cache) {
@@ -125,7 +125,7 @@ export default class DoclifyProxy {
 
   public middleware = async (req: IncomingMessage, res: IDoclifyResponse, next?: (err?: Error) => void) => {
     const proxy = this.proxy as any
-    const url = req.url ?? ''
+    const url: string = (req as any).originalUrl ?? req.url ?? ''
 
     if (url.indexOf(this.options.path) !== 0) {
       return next && next()
