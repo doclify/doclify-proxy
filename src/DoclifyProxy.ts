@@ -97,7 +97,7 @@ export default class DoclifyProxy {
 
     const doclifyRes = res as IDoclifyResponse
 
-    const key: string = (req as any).originalUrl ?? req.url ?? ''
+    const key = String((req as any).originalUrl ?? req.url ?? '').substring(this.options.path.length)
 
     if (doclifyRes.statusCode >= 500) {
       if (doclifyRes.cache) {
@@ -132,7 +132,7 @@ export default class DoclifyProxy {
     }
 
     if (this.cache) {
-      const key = url.replace(new RegExp('^' + this.options.path), '')
+      const key = url.substring(this.options.path.length)
 
       if (key === '/webhook') {
         return this.handleWebhook(req, res)
