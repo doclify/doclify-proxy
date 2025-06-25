@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/doclify/doclify-proxy/compare/v1.1.1...v1.1.2) (2025-06-25)
+
+
+### Bug Fixes
+
+* proxy key ([1270827](https://github.com/doclify/doclify-proxy/commit/127082718e3ca0e3f5fcc49c90f5ce7d2b0a0187))
+
 ## [1.1.1](https://github.com/doclify/doclify-proxy/compare/v1.1.0...v1.1.1) (2022-04-13)
 
 
